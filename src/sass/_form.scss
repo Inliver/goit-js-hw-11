@@ -1,0 +1,43 @@
+.search-form{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: sticky;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color: tomato;
+    box-shadow: 0 4px 5px rgba(202, 82, 26, 0.5);
+    border: solid coral;
+ }
+
+
+.search-form input{
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border: 0px;
+}
+
+
+.search-form button {
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    border: 0px;
+    background-color: rgb(179, 137, 74);
+}
+ 
+.load-more{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border: 0px;
+    background-color: rgb(179, 137, 74);
+    border-radius: 4px; 
+}   
+
+.hidden{
+    visibility: hidden;
+}
