@@ -18,48 +18,72 @@ const queryImage = {
 refs.formEl.addEventListener('submit', onFormSubmit)
 refs.loadMoreBtn.addEventListener('click', onLoadMoreClick)
 
-function onFormSubmit(e){
-    e.preventDefault();
-    refs.loadMoreBtn.classList.remove("hidden")
-    queryImage.page = 1;
-    queryImage.qeury = e.currentTarget.elements.searchQuery.value;
+async function onFormSubmit(e){
+  e.preventDefault();
+  refs.loadMoreBtn.classList.remove("hidden")
+  queryImage.page = 1;
+  queryImage.qeury = e.currentTarget.elements.searchQuery.value.trim();
     refs.galleryEl.innerHTML = "";
 
-    if (e.currentTarget.elements.searchQuery.value === "") {
+    if (queryImage.qeury === "") {
         refs.galleryEl.innerHTML = "";
         refs.loadMoreBtn.classList.add("hidden")
         Notiflix.Notify.info("Sorry, we don can give you all images on WWW. Pleas, write somesing")
         return
     }
 
-    fetchImages.fetchImages(queryImage).then(res => {
-        if(res.length === 0) {
-        refs.galleryEl.innerHTML = "";
-        refs.loadMoreBtn.classList.add("hidden")
-        Notiflix.Notify.warning("Sorry, there are no images matching your search query. Please try again.")
-        return
-        }
-    })
+    // fetchImages.fetchImages(queryImage).then(res => {
+    //     if(res.length === 0) {
+    //     refs.galleryEl.innerHTML = "";
+    //     refs.loadMoreBtn.classList.add("hidden")
+    //     Notiflix.Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+    //     return
+    //     }
+    // })
+  const res = await fetchImages.fetchImages(queryImage)
+    if(res.length === 0) {
+      refs.galleryEl.innerHTML = "";
+      refs.loadMoreBtn.classList.add("hidden")
+      Notiflix.Notify.warning("Sorry, there are no images matching your search query. Please try again.")
+      return
+      }
+  
 
     console.log(queryImage)
     onLoadMoreClick()
 }
 
 
-function onLoadMoreClick() {
+async function onLoadMoreClick() {
     refs.loadMoreBtn.disabled = true;
     refs.loadMoreBtn.textContent = "Loading..."
-    fetchImages.fetchImages(queryImage).then(res => {
+  
+
+    // fetchImages.fetchImages(queryImage).then(res => {
+    //   queryImage.page += 1;
+    //   markupImages(res);
+    //   console.log(res)
+    //   gallery.refresh()
+    //   refs.loadMoreBtn.disabled = false;
+    //   refs.loadMoreBtn.textContent = "Load more";
+    //   if (res.length < 40) {
+    //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+    //     refs.loadMoreBtn.classList.add('hidden');
+    //   }
+    // })
+  
+  const res = await fetchImages.fetchImages(queryImage)
         queryImage.page += 1;
-        markupImages(res);
-        console.log(res)
-        gallery.refresh()
-        refs.loadMoreBtn.disabled = false;
-        refs.loadMoreBtn.textContent = "Load more";
-    }).catch(error => {
-        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-        refs.loadMoreBtn.classList.add('hidden');
-    })
+      markupImages(res);
+      console.log(res)
+      gallery.refresh()
+      refs.loadMoreBtn.disabled = false;
+      refs.loadMoreBtn.textContent = "Load more";
+  if (res.length < 40) {
+    Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+    refs.loadMoreBtn.classList.add('hidden');
+  }
+
 
 }
 
@@ -93,41 +117,41 @@ var gallery = new SimpleLightbox('.gallery a', {
 
 
 
-function checkPosition() {
-  // Нам потребуется знать высоту документа и высоту экрана:
-  const height = document.body.offsetHeight
-  const screenHeight = window.innerHeight
+// function checkPosition() {
+//   // Нам потребуется знать высоту документа и высоту экрана:
+//   const height = document.body.offsetHeight
+//   const screenHeight = window.innerHeight
 
-  // Они могут отличаться: если на странице много контента,
-  // высота документа будет больше высоты экрана (отсюда и скролл).
+//   // Они могут отличаться: если на странице много контента,
+//   // высота документа будет больше высоты экрана (отсюда и скролл).
 
-  // Записываем, сколько пикселей пользователь уже проскроллил:
-  const scrolled = window.scrollY
+//   // Записываем, сколько пикселей пользователь уже проскроллил:
+//   const scrolled = window.scrollY
 
-  // Обозначим порог, по приближении к которому
-  // будем вызывать какое-то действие.
-  // В нашем случае — четверть экрана до конца страницы:
-  const threshold = height - screenHeight / 4
+//   // Обозначим порог, по приближении к которому
+//   // будем вызывать какое-то действие.
+//   // В нашем случае — четверть экрана до конца страницы:
+//   const threshold = height - screenHeight / 4
 
-  // Отслеживаем, где находится низ экрана относительно страницы:
-  const position = scrolled + screenHeight
+//   // Отслеживаем, где находится низ экрана относительно страницы:
+//   const position = scrolled + screenHeight
 
-    if (position >= threshold) {
-        console.log("red line")
-        fetchImages.fetchImages(queryImage).then(res => {
-        queryImage.page += 1;
-        markupImages(res);
-        console.log(res)
-        gallery.refresh()
-        refs.loadMoreBtn.disabled = false;
-        refs.loadMoreBtn.textContent = "Load more";
-    }).catch(error => {
-        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
-        refs.loadMoreBtn.classList.add('hidden');
-    })
-    // Если мы пересекли полосу-порог, вызываем нужное действие.
-  }
-}
+//     if (position >= threshold) {
+//         console.log("red line")
+//         fetchImages.fetchImages(queryImage).then(res => {
+//         queryImage.page += 1;
+//         markupImages(res);
+//         console.log(res)
+//         gallery.refresh()
+//         refs.loadMoreBtn.disabled = false;
+//         refs.loadMoreBtn.textContent = "Load more";
+//     }).catch(error => {
+//         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+//         refs.loadMoreBtn.classList.add('hidden');
+//     })
+//     // Если мы пересекли полосу-порог, вызываем нужное действие.
+//   }
+// }
 
- window.addEventListener('scroll', throttle(checkPosition, 500))
- window.addEventListener('resize', throttle(checkPosition, 500))    
+//  window.addEventListener('scroll', throttle(checkPosition, 500))
+//  window.addEventListener('resize', throttle(checkPosition, 500))    
